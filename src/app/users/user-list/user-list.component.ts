@@ -1,5 +1,8 @@
 import { User } from '../../core/model/user';
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { StatsService } from 'src/app/core/services/stats.service';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-user-list',
@@ -8,41 +11,31 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserListComponent implements OnInit {
   list: User[]
-  constructor() { }
+  all: User[]
+  public stock: number;
+  public category: String;
+  constructor(private userService: UserService,
+    private route: ActivatedRoute,
+    private statsService: StatsService) { }
 
   ngOnInit(): void {
-    this.list=[
-      {
-        id: 1,
-        category: 'simple user',
-        name: 'James Nix',
-        job: 'Full Stack Developer',
-        phone: '046 5685 6969',
-        email:'JamesNix@spy.com',
-        address:'5 Boar Lane SELLING 2LG',
-        picture:'https://bootdey.com/img/Content/avatar/avatar2.png'
+    this.all = this.userService.list;
+     //filter
+     this.route.params.subscribe(
+      (params) => {
+        this.category = params['category'];
+        if (this.category != null) {
+          this.list = this.all.filter((User) => User.category == this.category)
+        } else {
+          this.list = this.all
+        }
       },
-      {
-        id: 2,
-        name: 'Darlene Smith',
-        category: 'admin',
-        job: 'UI/UX Designer',
-        phone: '012 6587 1236',
-        email:'DarleneSmith@spy.com',
-        address:'57 Guildry Street GAMRIE',
-        picture:'https://bootdey.com/img/Content/avatar/avatar3.png'
-      },
-      {
-        id: 2,
-        name: 'William Swift',
-        category: 'simple user',
-        job: 'Backend Developer',
-        phone: '012 6587 1236',
-        email:' WilliamSwift@spy.co',
-        address:'80 South Street MONKW 7BR',
-        picture:'https://bootdey.com/img/Content/avatar/avatar4.png'
-      },
-    ]
+      () => { console.log('error') },
+      () => { console.log('complete') }
+    )
+  }
+  NbUsers() {
+    this.stock = this.statsService.getCountUsers(this.list);
   }
 
 }

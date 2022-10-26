@@ -15,4 +15,13 @@ export class StatsService {
     }
     return count;
   }
+
+  getCountUsers(list: any[]): number {
+    let count = 0
+    for (let i in list) {
+      count++
+
+    }
+    return count;
+  }
 }
